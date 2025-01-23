@@ -1,102 +1,120 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Growing Tree</title>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-        #canvas-container {
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-    </style>
+  <title>p5.js Features</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
 </head>
 <body>
-    <div id="canvas-container"></div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-    <script>
-        let tree = [];
-        let leaves = [];
-        let count = 0;
-
-        function setup() {
-            let canvas = createCanvas(windowWidth, windowHeight);
-            canvas.parent('canvas-container');
-            let a = createVector(width / 2, height);
-            let b = createVector(width / 2, height - 150);
-            let root = new Branch(a, b);
-            tree[0] = root;
-        }
-
-        function draw() {
-            background(255);
-            for (let i = 0; i < tree.length; i++) {
-                tree[i].show();
-            }
-            for (let i = 0; i < leaves.length; i++) {
-                fill(0, 255, 0, 150);
-                noStroke();
-                ellipse(leaves[i].x, leaves[i].y, 8, 8);
-            }
-        }
-
-        function mousePressed() {
-            for (let i = tree.length - 1; i >= 0; i--) {
-                if (!tree[i].finished) {
-                    tree.push(tree[i].branchA());
-                    tree.push(tree[i].branchB());
-                }
-                tree[i].finished = true;
-            }
-            count++;
-            if (count === 6) {
-                for (let i = 0; i < tree.length; i++) {
-                    if (!tree[i].finished) {
-                        let leaf = tree[i].end.copy();
-                        leaves.push(leaf);
-                    }
-                }
-            }
-        }
-
-        class Branch {
-            constructor(begin, end) {
-                this.begin = begin;
-                this.end = end;
-                this.finished = false;
-            }
-
-            show() {
-                stroke(0);
-                line(this.begin.x, this.begin.y, this.end.x, this.end.y);
-            }
-
-            branchA() {
-                let dir = p5.Vector.sub(this.end, this.begin);
-                dir.rotate(PI / 6);
-                dir.mult(0.67);
-                let newEnd = p5.Vector.add(this.end, dir);
-                let b = new Branch(this.end, newEnd);
-                return b;
-            }
-
-            branchB() {
-                let dir = p5.Vector.sub(this.end, this.begin);
-                dir.rotate(-PI / 4);
-                dir.mult(0.67);
-                let newEnd = p5.Vector.add(this.end, dir);
-                let b = new Branch(this.end, newEnd);
-                return b;
-            }
-        }
-    </script>
+  <h1>p5.js Features</h1>
+  <table>
+    <tr>
+      <th>Category</th>
+      <th>Feature</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <td>Core</td>
+      <td>createCanvas()</td>
+      <td>Creates a canvas element in the document.</td>
+    </tr>
+    <tr>
+      <td>Core</td>
+      <td>noLoop()</td>
+      <td>Stops draw() from continuously executing.</td>
+    </tr>
+    <tr>
+      <td>Core</td>
+      <td>loop()</td>
+      <td>Resumes draw() to continuously execute.</td>
+    </tr>
+    <tr>
+      <td>Drawing</td>
+      <td>background()</td>
+      <td>Sets the background color of the canvas.</td>
+    </tr>
+    <tr>
+      <td>Drawing</td>
+      <td>fill()</td>
+      <td>Sets the color used to fill shapes.</td>
+    </tr>
+    <tr>
+      <td>Drawing</td>
+      <td>stroke()</td>
+      <td>Sets the color used for the outline of shapes.</td>
+    </tr>
+    <tr>
+      <td>Drawing</td>
+      <td>ellipse()</td>
+      <td>Draws an ellipse (oval) to the screen.</td>
+    </tr>
+    <tr>
+      <td>Drawing</td>
+      <td>rect()</td>
+      <td>Draws a rectangle to the screen.</td>
+    </tr>
+    <tr>
+      <td>Input</td>
+      <td>mouseX</td>
+      <td>Returns the current horizontal position of the mouse.</td>
+    </tr>
+    <tr>
+      <td>Input</td>
+      <td>mouseY</td>
+      <td>Returns the current vertical position of the mouse.</td>
+    </tr>
+    <tr>
+      <td>Input</td>
+      <td>keyPressed()</td>
+      <td>Called once every time a key is pressed.</td>
+    </tr>
+    <tr>
+      <td>Transform</td>
+      <td>translate()</td>
+      <td>Moves the origin of the canvas to a different location.</td>
+    </tr>
+    <tr>
+      <td>Transform</td>
+      <td>rotate()</td>
+      <td>Rotates the canvas around the origin.</td>
+    </tr>
+    <tr>
+      <td>Transform</td>
+      <td>scale()</td>
+      <td>Increases or decreases the size of shapes drawn to the canvas.</td>
+    </tr>
+    <tr>
+      <td>Math</td>
+      <td>random()</td>
+      <td>Generates random numbers.</td>
+    </tr>
+    <tr>
+      <td>Math</td>
+      <td>map()</td>
+      <td>Re-maps a number from one range to another.</td>
+    </tr>
+    <tr>
+      <td>Color</td>
+      <td>color()</td>
+      <td>Creates colors for storing in variables.</td>
+    </tr>
+    <tr>
+      <td>Color</td>
+      <td>lerpColor()</td>
+      <td>Blends two colors to find a third color somewhere between them.</td>
+    </tr>
+  </table>
 </body>
 </html>

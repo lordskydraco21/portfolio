@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Knowledge Tree</title>
+    <title>Growing Tree</title>
     <style>
         body, html {
             margin: 0;
@@ -23,83 +23,78 @@
     <div id="canvas-container"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     <script>
-        let nodes = [];
+        let tree = [];
+        let leaves = [];
+        let count = 0;
 
         function setup() {
             let canvas = createCanvas(windowWidth, windowHeight);
             canvas.parent('canvas-container');
-            nodes.push(new Node(width / 2, 100, "Root"));
+            let a = createVector(width / 2, height);
+            let b = createVector(width / 2, height - 150);
+            let root = new Branch(a, b);
+            tree[0] = root;
         }
 
         function draw() {
             background(255);
-            for (let node of nodes) {
-                node.display();
-                node.update();
+            for (let i = 0; i < tree.length; i++) {
+                tree[i].show();
+            }
+            for (let i = 0; i < leaves.length; i++) {
+                fill(0, 255, 0, 150);
+                noStroke();
+                ellipse(leaves[i].x, leaves[i].y, 8, 8);
             }
         }
 
         function mousePressed() {
-            for (let node of nodes) {
-                if (node.isMouseOver()) {
-                    let newNode = new Node(mouseX, mouseY, "Child");
-                    node.addChild(newNode);
-                    nodes.push(newNode);
-                    break;
+            for (let i = tree.length - 1; i >= 0; i--) {
+                if (!tree[i].finished) {
+                    tree.push(tree[i].branchA());
+                    tree.push(tree[i].branchB());
+                }
+                tree[i].finished = true;
+            }
+            count++;
+            if (count === 6) {
+                for (let i = 0; i < tree.length; i++) {
+                    if (!tree[i].finished) {
+                        let leaf = tree[i].end.copy();
+                        leaves.push(leaf);
+                    }
                 }
             }
         }
 
-        function windowResized() {
-            resizeCanvas(windowWidth, windowHeight);
-        }
-
-        class Node {
-            constructor(x, y, label) {
-                this.x = x;
-                this.y = y;
-                this.label = label;
-                this.children = [];
-                this.radius = 25;
+        class Branch {
+            constructor(begin, end) {
+                this.begin = begin;
+                this.end = end;
+                this.finished = false;
             }
 
-            display() {
-                fill(0);
-                ellipse(this.x, this.y, this.radius * 2, this.radius * 2);
-                fill(255);
-                textAlign(CENTER, CENTER);
-                text(this.label, this.x, this.y);
-                for (let child of this.children) {
-                    stroke(0);
-                    line(this.x, this.y, child.x, child.y);
-                }
+            show() {
+                stroke(0);
+                line(this.begin.x, this.begin.y, this.end.x, this.end.y);
             }
 
-            update() {
-    for (let child of this.children) {
-        child.x = lerp(child.x, this.x + random(-100, 100), 0.05);
-        child.y = lerp(child.y, this.y + random(50, 100), 0.05);
-
-        // Prevent overlapping
-        for (let other of nodes) {
-            if (other !== child) {
-                let d = dist(child.x, child.y, other.x, other.y);
-                if (d < this.radius * 2) {
-                    let angle = atan2(child.y - other.y, child.x - other.x);
-                    child.x = other.x + cos(angle) * this.radius * 2;
-                    child.y = other.y + sin(angle) * this.radius * 2;
-                }
-            }
-        }
-    }
-}
-            addChild(child) {
-                this.children.push(child);
+            branchA() {
+                let dir = p5.Vector.sub(this.end, this.begin);
+                dir.rotate(PI / 6);
+                dir.mult(0.67);
+                let newEnd = p5.Vector.add(this.end, dir);
+                let b = new Branch(this.end, newEnd);
+                return b;
             }
 
-            isMouseOver() {
-                let d = dist(mouseX, mouseY, this.x, this.y);
-                return d < this.radius;
+            branchB() {
+                let dir = p5.Vector.sub(this.end, this.begin);
+                dir.rotate(-PI / 4);
+                dir.mult(0.67);
+                let newEnd = p5.Vector.add(this.end, dir);
+                let b = new Branch(this.end, newEnd);
+                return b;
             }
         }
     </script>

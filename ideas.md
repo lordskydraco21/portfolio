@@ -1,0 +1,1 @@
+list to old commits into inpdepent files. generate indepent file from commit history.
